@@ -12,9 +12,9 @@ public class TableFieldNameAttribute : Attribute
 
     internal TableFieldNameAttribute(string fieldName)
     {
-        if (FieldName == null) FieldName = string.Empty;
-
         FieldName = fieldName;
+
+        if (FieldName == null) FieldName = string.Empty;
     }
 }
 
@@ -44,9 +44,9 @@ public class TableNameAttribute : Attribute
 
     internal TableNameAttribute(string tableName)
     {
-        if (TableName == null) TableName = string.Empty;
-
         TableName = tableName;
+
+        if (TableName == null) TableName = string.Empty;
     }
 }
 
