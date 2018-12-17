@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 
 namespace DBMySql
 {
-    public static class SQLiteDBStateless
+    public static class MySQLDBStateless
     {
         private static MySqlConnection OpenConnection()
         {
