@@ -1,0 +1,2 @@
+# DBMySQLCore
+MySQL .Net Core
