@@ -93,7 +93,7 @@ public static class IntegerExtension
                         .FieldName;
     }
 
-    public static bool IsEmpty(this int value) => value == SQLiteDBCommon.EmptyInt ? true : false;
+    public static bool IsEmpty(this int value) => value == MySQLDBCommon.EmptyInt ? true : false;
 }
 #endregion
 
@@ -129,7 +129,7 @@ public static class StringExtension
 
 
 
-    public static bool IsEmpty(this String value) => value == SQLiteDBCommon.EmptyString ? true : false;
+    public static bool IsEmpty(this String value) => value == MySQLDBCommon.EmptyString ? true : false;
 }
 
 #endregion
