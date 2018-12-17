@@ -127,8 +127,6 @@ public static class StringExtension
                         .ExcludeFromInsert;
     }
 
-
-
     public static bool IsEmpty(this String value) => value == MySQLDBCommon.EmptyString ? true : false;
 }
 
