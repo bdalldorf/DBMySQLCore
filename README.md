@@ -1,2 +1,2 @@
-# DBMySQLCore
+# MySQL Core
 MySQL .Net Core
