@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -37,7 +37,7 @@ namespace DBMySql.Models
 
             public UserModel(int id)
         {
-            DataTable DataTable = MySQLDBStateless.ExecDataTable($"SELECT * FROM usrUser_user WHERE usrID = {id}");
+            DataTable DataTable = MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE usrID = {id}");
 
             if (DataTable.Rows.Count == 1)
             {
@@ -47,23 +47,23 @@ namespace DBMySql.Models
 
         private void LoadByUserModelDataRow(DataRow dataRow)
         {
-            this.ID = MySQLDBCommon.GetValueIntFromSql(dataRow[this.ID.TableField()]);
-            this.UID = MySQLDBCommon.GetValueStringFromSql(dataRow[this.UID.TableField()]);
-            this.FirstName = MySQLDBCommon.GetValueStringFromSql(dataRow[this.FirstName.TableField()]);
-            this.LastName = MySQLDBCommon.GetValueStringFromSql(dataRow[this.LastName.TableField()]);
-            this.EmailAddress = MySQLDBCommon.GetValueStringFromSql(dataRow[this.EmailAddress.TableField()]);
+            this.ID = MySQLDBCommon.GetValueIntFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.ID)))]);
+            this.UID = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.UID)))]); ;
+            this.FirstName = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.FirstName)))]);
+            this.LastName = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.LastName)))]);
+            this.EmailAddress = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.EmailAddress)))]);
         }
 
         #endregion
 
         #region Additional Methods
 
-        private string ModelFields
+        private List<string> ModelFields
         {
             get { return MySQLDBStateless.ModelFieldNames(typeof(UserModel)); }
         }
 
-        private string ModelValues
+        private List<object> ModelValues
         {
             get { return MySQLDBStateless.ModelFieldValues(this); }        
         }
@@ -90,6 +90,7 @@ namespace DBMySql.Models
         private void Update()
         {
             MySQLDBStateless.ExecNonQuery($"UPDATE {this.TableName()} {MySQLDBStateless.GenerateUpdateFields(this)} WHERE usrID = {this.ID}");
+            MySQLDBStateless.ExecNonQuery($"UPDATE {this.TableName()} SET {MySQLDBStateless.GenerateUpdateFields(this)} WHERE usrID = {this.ID}");
         }
 
         private void Delete()

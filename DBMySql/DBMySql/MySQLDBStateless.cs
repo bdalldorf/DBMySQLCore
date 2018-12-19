@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
@@ -207,32 +207,52 @@ namespace DBMySql
             }
         }
 
-        public static string ModelFieldNames(Type model)
+        public static string GetDatabaseTableFieldName(Type model, string fieldName)
         {
-            StringBuilder StringBuilder = new StringBuilder();
+            return (string)model.GetField(fieldName)
+                .CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute))
+                .First()
+                .ConstructorArguments
+                .First()
+                .Value;
+        }
+
+        public static string GetDatabaseTableFieldName(FieldInfo fieldInfo)
+        {
+            return (string)fieldInfo
+                .CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute))
+                .First()
+                .ConstructorArguments
+                .First()
+                .Value;
+        }
+
+        public static List<string> ModelFieldNames(Type model)
+        {
+            List<String> ModelFieldNames = new List<string>();
 
             foreach (FieldInfo Field in model.GetFields(System.Reflection.BindingFlags.Public
                 | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
             {
                 string Value = (string)Field.CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute)).First().ConstructorArguments.First().Value;
-                StringBuilder.Append(StringBuilder.Length == 0 ? $"{Value}" : $", {Value}");
+                ModelFieldNames.Add(Value);
             }
 
-            return StringBuilder.ToString();
+            return ModelFieldNames;
         }
 
-        public static string ModelFieldValues(object model)
+        public static List<object> ModelFieldValues(object model)
         {
-            StringBuilder StringBuilder = new StringBuilder();
+            List<object> ModelFieldValues = new List<object>();
 
             foreach (var properties in model.GetType().GetFields(System.Reflection.BindingFlags.Public
                 | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
             {
                 object Value = properties.GetValue(model);
-                StringBuilder.Append(StringBuilder.Length == 0 ? $"{MySQLDBCommon.SetValueForSql(Value)}" : $", {MySQLDBCommon.SetValueForSql(Value)}");
+                ModelFieldValues.Add(MySQLDBCommon.SetValueForSql(Value));
             }
 
-            return StringBuilder.ToString();
+            return ModelFieldValues;
         }
 
         public static string GenerateInsertFields(IDatabaseModel model)

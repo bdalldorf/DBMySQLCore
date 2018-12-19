@@ -1,6 +1,8 @@
 using DBMySql;
 using DBMySql.Models;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Text;
 
 namespace DBMySQLTesting
 {
@@ -9,8 +11,14 @@ namespace DBMySQLTesting
         [Test]
         public void ReturnTrueIfModelTableFieldsAreCorrect()
         {
-            string UserModelFIelds = MySQLDBStateless.ModelFieldNames(typeof(UserModel));
-            Assert.AreEqual("usrID, usrUID, usrFirstName, usrLastName, usrEmailAddress", UserModelFIelds);
+            List<string> UserModelFields = MySQLDBStateless.ModelFieldNames(typeof(UserModel));
+
+            StringBuilder StringBuilder = new StringBuilder();
+
+            foreach (string userModelField in UserModelFields)
+                StringBuilder.Append(StringBuilder.Length == 0 ? $"{userModelField}" : $", {userModelField}");
+
+            Assert.AreEqual("usrID, usrUID, usrFirstName, usrLastName, usrEmailAddress", StringBuilder.ToString());
         }
 
         [Test]
@@ -25,8 +33,14 @@ namespace DBMySQLTesting
                 EmailAddress = "test@testing.com"
             };
 
-            string UserModelFIelds = MySQLDBStateless.ModelFieldValues(UserModel);
-            Assert.AreEqual("1, 'Testert1', 'Test', 'Tester', 'test@testing.com'", UserModelFIelds);
+            List<object> UserModelFields = MySQLDBStateless.ModelFieldValues(UserModel);
+
+            StringBuilder StringBuilder = new StringBuilder();
+
+            foreach (object userModelField in UserModelFields)
+                StringBuilder.Append(StringBuilder.Length == 0 ? $"{userModelField}" : $", {userModelField}");
+
+            Assert.AreEqual("1, 'Testert1', 'Test', 'Tester', 'test@testing.com'", StringBuilder.ToString());
         }
 
         [Test]

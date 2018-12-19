@@ -72,25 +72,18 @@ public static class ClassExtension
 
 public static class IntegerExtension
 {
-    /// <summary>
-    /// Returns an empty string if the [TableFieldName] attribute isn't added to the property
-    /// </summary>
-    public static string TableField(this int value)
+    public static bool ExcludeFromUpdate(this bool value)
     {
         return value.GetType()
-                        .GetMember(value.ToString())
-                        .First()
-                        .GetCustomAttribute<TableFieldNameAttribute>()
-                        .FieldName;
+                        .GetCustomAttribute<TableFieldExcludeFromUpdateAttribute>()
+                        .ExcludeFromUpdate;
     }
 
-    public static string ExcludeFromUpdate(this bool value)
+    public static bool ExcludeFromInsert(this bool value)
     {
         return value.GetType()
-                        .GetMember(value.ToString())
-                        .First()
-                        .GetCustomAttribute<TableFieldNameAttribute>()
-                        .FieldName;
+                        .GetCustomAttribute<TableFieldExcludeFromInsertAttribute>()
+                        .ExcludeFromInsert;
     }
 
     public static bool IsEmpty(this int value) => value == MySQLDBCommon.EmptyInt ? true : false;
