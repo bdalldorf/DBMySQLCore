@@ -89,7 +89,6 @@ namespace DBMySql.Models
 
         private void Update()
         {
-            MySQLDBStateless.ExecNonQuery($"UPDATE {this.TableName()} {MySQLDBStateless.GenerateUpdateFields(this)} WHERE usrID = {this.ID}");
             MySQLDBStateless.ExecNonQuery($"UPDATE {this.TableName()} SET {MySQLDBStateless.GenerateUpdateFields(this)} WHERE usrID = {this.ID}");
         }
 
