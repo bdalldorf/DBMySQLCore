@@ -12,7 +12,7 @@ namespace DBMySql
     {
         private static MySqlConnection OpenConnection()
         {
-            MySqlConnection MySqlConnection = new MySqlConnection("ConnectionString");
+            MySqlConnection MySqlConnection = new MySqlConnection(MySqlConnectionStrings.ConnectionString);
 
             MySqlConnection.Open();
 
