@@ -47,12 +47,15 @@ namespace DBMySql.Models
 
         private void LoadByUserModelDataRow(DataRow dataRow)
         {
-            this.ID = MySQLDBCommon.GetValueIntFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.ID)))]);
-            this.UID = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.UID)))]); ;
-            this.FirstName = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.FirstName)))]);
-            this.LastName = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.LastName)))]);
-            this.EmailAddress = MySQLDBCommon.GetValueStringFromSql(dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this.GetType().GetField(nameof(this.EmailAddress)))]);
+            this.ID = MySQLDBCommon.GetValueIntFromSql(GetDatabaseTableFieldName(dataRow, nameof(this.ID)));
+            this.UID = MySQLDBCommon.GetValueStringFromSql(GetDatabaseTableFieldName(dataRow, nameof(this.UID)));
+            this.FirstName = MySQLDBCommon.GetValueStringFromSql(GetDatabaseTableFieldName(dataRow, nameof(this.FirstName)));
+            this.LastName = MySQLDBCommon.GetValueStringFromSql(GetDatabaseTableFieldName(dataRow, nameof(this.LastName)));
+            this.EmailAddress = MySQLDBCommon.GetValueStringFromSql(GetDatabaseTableFieldName(dataRow, nameof(this.EmailAddress)));
         }
+
+        private object GetDatabaseTableFieldName(DataRow dataRow, string fieldName) => dataRow[MySQLDBStateless.GetDatabaseTableFieldName(this, fieldName)];
+        
 
         #endregion
 
