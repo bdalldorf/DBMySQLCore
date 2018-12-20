@@ -55,10 +55,10 @@ namespace DBMySQLTesting
                 EmailAddress = "test@testing.com"
             };
 
-            string UserUpdateFields = MySQLDBStateless.GenerateInsertFields(UserModel);
-            Assert.AreEqual("(usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')", UserUpdateFields);
+            string UserInsertFields = MySQLDBStateless.GenerateInsertFields(UserModel);
+            Assert.AreEqual("(usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')", UserInsertFields);
             Assert.AreEqual($"INSERT INTO {UserModel.TableName()} (usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')", 
-                $"INSERT INTO {UserModel.TableName()} {UserUpdateFields}");
+                $"INSERT INTO {UserModel.TableName()} {UserInsertFields}");
         }
 
         [Test]
@@ -73,9 +73,9 @@ namespace DBMySQLTesting
                 EmailAddress = "test@testing.com"
             };
 
-            string UserUpdateStatement = MySQLDBStateless.GenerateStandardInsertStatement(UserModel);
+            string UserInsertStatement = MySQLDBStateless.GenerateStandardInsertStatement(UserModel);
             Assert.AreEqual($"INSERT INTO {UserModel.TableName()} (usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')",
-                UserUpdateStatement);
+                UserInsertStatement);
         }
 
         [Test]
@@ -108,9 +108,9 @@ namespace DBMySQLTesting
                 EmailAddress = "test@testing.com"
             };
 
-            string UserUpdateFields = MySQLDBStateless.GenerateStandardUpdateStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
+            string UserUpdateStatement = MySQLDBStateless.GenerateStandardUpdateStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
             Assert.AreEqual($"UPDATE {UserModel.TableName()} SET usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com' WHERE usrID = 1",
-                UserUpdateFields);
+                UserUpdateStatement);
         }
 
         [Test]
@@ -125,9 +125,9 @@ namespace DBMySQLTesting
                 EmailAddress = "test@testing.com"
             };
 
-            string UserUpdateFields = MySQLDBStateless.GenerateStandardDeleteStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
+            string UserDeleteStatement = MySQLDBStateless.GenerateStandardDeleteStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
             Assert.AreEqual($"DELETE FROM {UserModel.TableName()} WHERE usrID = 1",
-                UserUpdateFields);
+                UserDeleteStatement);
         }
 
         [Test]
