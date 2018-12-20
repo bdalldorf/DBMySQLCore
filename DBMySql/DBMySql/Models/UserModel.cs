@@ -94,7 +94,7 @@ namespace DBMySql.Models
             MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardUpdateStatement(this, nameof(this.ID), this.ID));
         }
 
-        private void Delete()
+        public void Delete()
         {
             MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardDeleteStatement(this, nameof(this.ID), this.ID));
         }
