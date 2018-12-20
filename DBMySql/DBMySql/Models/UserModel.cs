@@ -86,19 +86,17 @@ namespace DBMySql.Models
 
         private void Insert()
         {
-            this.ID = (int)MySQLDBStateless.
-                ExecInsertNonQueryReturnID($"INSERT INTO {this.TableName()} {MySQLDBStateless.GenerateInsertFields(this)}");
+            this.ID = (int)MySQLDBStateless.ExecInsertNonQueryReturnID(MySQLDBStateless.GenerateStandardInsertStatement(this));
         }
 
         private void Update()
         {
-            MySQLDBStateless.ExecNonQuery($"UPDATE {this.TableName()} SET {MySQLDBStateless.GenerateUpdateFields(this)} WHERE usrID = {this.ID}");
+            MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardUpdateStatement(this, nameof(this.ID), this.ID));
         }
 
         private void Delete()
         {
-            MySQLDBStateless.
-                ExecInsertNonQueryReturnID($"DELETE FROM {this.TableName()} WHERE usrID = {this.ID}");
+            MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardDeleteStatement(this, nameof(this.ID), this.ID));
         }
 
         #endregion

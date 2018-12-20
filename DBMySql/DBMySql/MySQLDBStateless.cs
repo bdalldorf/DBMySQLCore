@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
@@ -12,7 +12,7 @@ namespace DBMySql
     {
         private static MySqlConnection OpenConnection()
         {
-            MySqlConnection MySqlConnection = new MySqlConnection("connectionString");
+            MySqlConnection MySqlConnection = new MySqlConnection("server = 127.0.0.1; uid = root; pwd = Dde$ign4; database = devdb");
 
             MySqlConnection.Open();
 
@@ -306,6 +306,21 @@ namespace DBMySql
             }
 
             return StringBuilder.ToString();
+        }
+
+        public static string GenerateStandardInsertStatement(IDatabaseModel model)
+        {
+            return $"INSERT INTO {model.TableName()} {GenerateInsertFields(model)}";
+        }
+
+        public static string GenerateStandardUpdateStatement(IDatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
+        {
+            return $"UPDATE {model.TableName()} SET {GenerateUpdateFields(model)} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
+        }
+
+        public static string GenerateStandardDeleteStatement(IDatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
+        {
+            return $"DELETE FROM {model.TableName()} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
         }
     }
 }

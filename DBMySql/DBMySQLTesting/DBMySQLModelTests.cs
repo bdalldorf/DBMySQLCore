@@ -44,24 +44,6 @@ namespace DBMySQLTesting
         }
 
         [Test]
-        public void ReturnTrueIfUpdateFieldsAreCorrect()
-        {
-            UserModel UserModel = new UserModel()
-            {
-                ID = 1,
-                UID = "Testert1",
-                FirstName = "Test",
-                LastName = "Tester",
-                EmailAddress = "test@testing.com"
-            };
-
-            string UserUpdateFields = MySQLDBStateless.GenerateUpdateFields(UserModel);
-            Assert.AreEqual("usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com'", UserUpdateFields);
-            Assert.AreEqual($"UPDATE {UserModel.TableName()} SET usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com' WHERE usrID = 1", 
-                $"UPDATE {UserModel.TableName()} SET {UserUpdateFields} WHERE usrID = 1");
-        }
-
-        [Test]
         public void ReturnTrueIfInsertFieldsAreCorrect()
         {
             UserModel UserModel = new UserModel()
@@ -77,6 +59,75 @@ namespace DBMySQLTesting
             Assert.AreEqual("(usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')", UserUpdateFields);
             Assert.AreEqual($"INSERT INTO {UserModel.TableName()} (usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')", 
                 $"INSERT INTO {UserModel.TableName()} {UserUpdateFields}");
+        }
+
+        [Test]
+        public void ReturnTrueIfStandardInsertStatementisCorrect()
+        {
+            UserModel UserModel = new UserModel()
+            {
+                ID = 1,
+                UID = "Testert1",
+                FirstName = "Test",
+                LastName = "Tester",
+                EmailAddress = "test@testing.com"
+            };
+
+            string UserUpdateStatement = MySQLDBStateless.GenerateStandardInsertStatement(UserModel);
+            Assert.AreEqual($"INSERT INTO {UserModel.TableName()} (usrUID, usrFirstName, usrLastName, usrEmailAddress) VALUES ('Testert1', 'Test', 'Tester', 'test@testing.com')",
+                UserUpdateStatement);
+        }
+
+        [Test]
+        public void ReturnTrueIfUpdateFieldsAreCorrect()
+        {
+            UserModel UserModel = new UserModel()
+            {
+                ID = 1,
+                UID = "Testert1",
+                FirstName = "Test",
+                LastName = "Tester",
+                EmailAddress = "test@testing.com"
+            };
+
+            string UserUpdateFields = MySQLDBStateless.GenerateUpdateFields(UserModel);
+            Assert.AreEqual("usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com'", UserUpdateFields);
+            Assert.AreEqual($"UPDATE {UserModel.TableName()} SET usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com' WHERE usrID = 1",
+                $"UPDATE {UserModel.TableName()} SET {UserUpdateFields} WHERE usrID = 1");
+        }
+
+        [Test]
+        public void ReturnTrueIfUpdateStatementIsCorrect()
+        {
+            UserModel UserModel = new UserModel()
+            {
+                ID = 1,
+                UID = "Testert1",
+                FirstName = "Test",
+                LastName = "Tester",
+                EmailAddress = "test@testing.com"
+            };
+
+            string UserUpdateFields = MySQLDBStateless.GenerateStandardUpdateStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
+            Assert.AreEqual($"UPDATE {UserModel.TableName()} SET usrUID = 'Testert1', usrFirstName = 'Test', usrLastName = 'Tester', usrEmailAddress = 'test@testing.com' WHERE usrID = 1",
+                UserUpdateFields);
+        }
+
+        [Test]
+        public void ReturnTrueIfDeleteStatementIsCorrect()
+        {
+            UserModel UserModel = new UserModel()
+            {
+                ID = 1,
+                UID = "Testert1",
+                FirstName = "Test",
+                LastName = "Tester",
+                EmailAddress = "test@testing.com"
+            };
+
+            string UserUpdateFields = MySQLDBStateless.GenerateStandardDeleteStatement(UserModel, nameof(UserModel.ID), UserModel.ID);
+            Assert.AreEqual($"DELETE FROM {UserModel.TableName()} WHERE usrID = 1",
+                UserUpdateFields);
         }
 
         [Test]
