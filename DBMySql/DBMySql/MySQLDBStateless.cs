@@ -12,7 +12,7 @@ namespace DBMySql
     {
         private static MySqlConnection OpenConnection()
         {
-            MySqlConnection MySqlConnection = new MySqlConnection("server = 127.0.0.1; uid = root; pwd = Dde$ign4; database = devdb");
+            MySqlConnection MySqlConnection = new MySqlConnection("ConnectionString");
 
             MySqlConnection.Open();
 
