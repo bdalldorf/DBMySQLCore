@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using DBMySql;
+using System.ComponentModel;
 
 #region Attributes
 
@@ -122,8 +123,8 @@ public static class EnumerationExtension
         return enumValue.GetType()
                         .GetMember(enumValue.ToString())
                         .First()
-                        .GetCustomAttribute<DisplayAttribute>()
-                        .GetDescription();
+                        .GetCustomAttribute<DescriptionAttribute>()
+                        .Description;
     }
 
     public static string TableFieldName(this Enum enumValue)

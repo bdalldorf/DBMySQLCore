@@ -35,14 +35,19 @@ namespace DBMySql.Models
 
         public UserModel() { }
 
-            public UserModel(int id)
+        public UserModel(int id)
         {
-            DataTable DataTable = MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE usrID = {id}");
+            DataTable DataTable = MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE {MySQLDBStateless.GetDatabaseTableFieldName(this, nameof(this.ID))} = {id}");
 
             if (DataTable.Rows.Count == 1)
             {
                 LoadByUserModelDataRow(DataTable.Rows[0]);
             }
+        }
+
+        public UserModel(DataRow dataRow)
+        {
+            LoadByUserModelDataRow(dataRow);
         }
 
         private void LoadByUserModelDataRow(DataRow dataRow)
