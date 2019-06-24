@@ -209,7 +209,7 @@ namespace DBMySql
 
         public static string GetDatabaseTableFieldName(object model, string fieldName)
         {
-            return (string)model.GetType().GetField(fieldName)
+            return (string)model.GetType().GetProperty(fieldName)
                 .CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute))
                 .First()
                 .ConstructorArguments
@@ -231,10 +231,10 @@ namespace DBMySql
         {
             List<String> ModelFieldNames = new List<string>();
 
-            foreach (FieldInfo Field in model.GetFields(System.Reflection.BindingFlags.Public
-                | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
+            foreach (PropertyInfo property in model.GetProperties(System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.GetProperty | BindingFlags.Instance))
             {
-                string Value = (string)Field.CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute)).First().ConstructorArguments.First().Value;
+                string Value = (string)property.CustomAttributes.Where(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute)).First().ConstructorArguments.First().Value;
                 ModelFieldNames.Add(Value);
             }
 
@@ -245,8 +245,8 @@ namespace DBMySql
         {
             List<object> ModelFieldValues = new List<object>();
 
-            foreach (var properties in model.GetType().GetFields(System.Reflection.BindingFlags.Public
-                | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
+            foreach (var properties in model.GetType().GetProperties(System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.GetProperty | BindingFlags.Instance))
             {
                 object Value = properties.GetValue(model);
                 ModelFieldValues.Add(MySQLDBCommon.SetValueForSql(Value));
@@ -260,21 +260,21 @@ namespace DBMySql
             StringBuilder StringBuilderFields = new StringBuilder();
             StringBuilder StringBuilderValues = new StringBuilder();
 
-            foreach (FieldInfo Field in model.GetType().GetFields(System.Reflection.BindingFlags.Public
-                | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
+            foreach (PropertyInfo property in model.GetType().GetProperties(System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.GetProperty | BindingFlags.Instance))
             {
-                CustomAttributeData l_ExcludeFromUpdate = Field.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromUpdateAttribute));
+                CustomAttributeData l_ExcludeFromUpdate = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromUpdateAttribute));
 
                 if (l_ExcludeFromUpdate != null && Convert.ToBoolean(l_ExcludeFromUpdate.ConstructorArguments.First().Value))
                     continue;
 
-                CustomAttributeData l_TableFieldName = Field.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute));
+                CustomAttributeData l_TableFieldName = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute));
 
                 if (l_TableFieldName == null)
                     continue;
 
                 string FieldName = (string)l_TableFieldName.ConstructorArguments.First().Value;
-                object FieldValue = Field.GetValue(model);
+                object FieldValue = property.GetValue(model);
 
                 StringBuilderFields.Append(StringBuilderFields.Length == 0 ? $"({FieldName}" : $", {FieldName}");
                 StringBuilderValues.Append(StringBuilderValues.Length == 0 ? $"{MySQLDBCommon.SetValueForSql(FieldValue)}" : $", {MySQLDBCommon.SetValueForSql(FieldValue)}");
@@ -287,21 +287,21 @@ namespace DBMySql
         {
             StringBuilder StringBuilder = new StringBuilder();
 
-            foreach (FieldInfo Field in model.GetType().GetFields(System.Reflection.BindingFlags.Public
-                  | System.Reflection.BindingFlags.GetField | BindingFlags.Instance))
+            foreach (PropertyInfo property in model.GetType().GetProperties(System.Reflection.BindingFlags.Public
+                  | System.Reflection.BindingFlags.GetProperty | BindingFlags.Instance))
             {
-                CustomAttributeData l_ExcludeFromUpdate = Field.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromUpdateAttribute));
+                CustomAttributeData l_ExcludeFromUpdate = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromUpdateAttribute));
 
                 if (l_ExcludeFromUpdate != null && Convert.ToBoolean(l_ExcludeFromUpdate.ConstructorArguments.First().Value))
                     continue;
 
-                CustomAttributeData l_TableFieldName = Field.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute));
+                CustomAttributeData l_TableFieldName = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldNameAttribute));
 
                 if (l_TableFieldName == null)
                     continue;
 
                 string FieldName = (string)l_TableFieldName.ConstructorArguments.First().Value;
-                object FieldValue = Field.GetValue(model);
+                object FieldValue = property.GetValue(model);
                 StringBuilder.Append(StringBuilder.Length == 0 ? $"{FieldName} = {MySQLDBCommon.SetValueForSql(FieldValue)}" : $", {FieldName} = {MySQLDBCommon.SetValueForSql(FieldValue)}");
             }
 

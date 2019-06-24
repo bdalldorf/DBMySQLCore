@@ -19,15 +19,15 @@ namespace DBMySql.Models
         [TableFieldName("usrID")]
         [TableFieldExcludeFromUpdate(true)]
         [TableFieldExcludeFromInsert(true)]
-        public int ID;
+        public int ID { get; set; }
         [TableFieldName("usrUID")]
-        public string UID;
+        public string UID { get; set; }
         [TableFieldName("usrFirstName")]
-        public string FirstName;
+        public string FirstName { get; set; }
         [TableFieldName("usrLastName")]
-        public string LastName;
+        public string LastName { get; set; }
         [TableFieldName("usrEmailAddress")]
-        public string EmailAddress;
+        public string EmailAddress { get; set; }
 
         #endregion
 
