@@ -263,7 +263,7 @@ namespace DBMySql
             foreach (PropertyInfo property in model.GetType().GetProperties(System.Reflection.BindingFlags.Public
                 | System.Reflection.BindingFlags.GetProperty | BindingFlags.Instance))
             {
-                CustomAttributeData l_ExcludeFromUpdate = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromUpdateAttribute));
+                CustomAttributeData l_ExcludeFromUpdate = property.CustomAttributes.FirstOrDefault(customAttributes => customAttributes.AttributeType == typeof(TableFieldExcludeFromInsertAttribute));
 
                 if (l_ExcludeFromUpdate != null && Convert.ToBoolean(l_ExcludeFromUpdate.ConstructorArguments.First().Value))
                     continue;

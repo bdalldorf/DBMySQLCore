@@ -20,7 +20,7 @@ namespace DBMySql
         public static string SetValueForSql(double value) => value == EmptyDouble ? "NULL" : value.ToString();
         public static string SetValueForSql(float value) => value == EmptyFloat ? "NULL" : value.ToString();
         public static string SetValueForSql(decimal value) => value == EmptyDecimal ? "NULL" : value.ToString();
-        public static string SetValueForSql(DateTime value) => value == EmptyDateTime ? "NULL" : $"'{value}'";
+        public static string SetValueForSql(DateTime value) => value == EmptyDateTime ? "NULL" : string.Format("'{0}'", value.ToString("yyyy-MM-dd hh:mm:ss"));
         public static string SetValueForSql(char value) => value == EmptyChar ? "NULL" : $"'{value}'";
         public static string SetValueForSql(string value) => value == EmptyString ? "NULL" : $"'{value}'";
         public static string SetValueForSql(bool value) => value ? "1" : "0";
