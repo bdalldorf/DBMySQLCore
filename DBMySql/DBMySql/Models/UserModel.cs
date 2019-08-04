@@ -8,7 +8,7 @@ using System.Text;
 namespace DBMySql.Models
 {
     [TableName("usrUser_usr")]
-    public partial class UserModel : IDatabaseModel
+    public partial class UserModel : DatabaseModel
     {
         #region private properties
 
@@ -33,11 +33,11 @@ namespace DBMySql.Models
 
         #region Constructors
 
-        public UserModel() { }
+        public UserModel() : base(MySqlConnectionString.ConnectionString) { }
 
-        public UserModel(int id)
+        public UserModel(int id) : base(MySqlConnectionString.ConnectionString)
         {
-            DataTable DataTable = MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE {MySQLDBStateless.GetDatabaseTableFieldName(this, nameof(this.ID))} = {id}");
+            DataTable DataTable = _MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE {MySQLDBStateless.GetDatabaseTableFieldName(this, nameof(this.ID))} = {id}");
 
             if (DataTable.Rows.Count == 1)
             {
@@ -45,7 +45,7 @@ namespace DBMySql.Models
             }
         }
 
-        public UserModel(DataRow dataRow)
+        public UserModel(DataRow dataRow) : base(MySqlConnectionString.ConnectionString)
         {
             LoadByUserModelDataRow(dataRow);
         }
@@ -91,17 +91,17 @@ namespace DBMySql.Models
 
         private void Insert()
         {
-            this.ID = (int)MySQLDBStateless.ExecInsertNonQueryReturnID(MySQLDBStateless.GenerateStandardInsertStatement(this));
+            this.ID = (int)_MySQLDBStateless.ExecInsertNonQueryReturnID(MySQLDBStateless.GenerateStandardInsertStatement(this));
         }
 
         private void Update()
         {
-            MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardUpdateStatement(this, nameof(this.ID), this.ID));
+            _MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardUpdateStatement(this, nameof(this.ID), this.ID));
         }
 
         public void Delete()
         {
-            MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardDeleteStatement(this, nameof(this.ID), this.ID));
+            _MySQLDBStateless.ExecNonQuery(MySQLDBStateless.GenerateStandardDeleteStatement(this, nameof(this.ID), this.ID));
         }
 
         #endregion

@@ -5,23 +5,45 @@ using System.Reflection;
 using System.Text;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using System.IO;
 
 namespace DBMySql
 {
-    public static class MySQLDBStateless
+    public class MySQLDBStateless
     {
-        private static MySqlConnection OpenConnection()
+        private string _ConnectionString { get; set; }
+
+        public MySQLDBStateless(string connectionString)
         {
-            MySqlConnection MySqlConnection = new MySqlConnection(MySqlConnectionStrings.ConnectionString);
+            _ConnectionString = connectionString;
+        }
+
+        private MySqlConnection OpenConnection()
+        {
+            MySqlConnection MySqlConnection = new MySqlConnection(_ConnectionString);
 
             MySqlConnection.Open();
 
             return MySqlConnection;
         }
 
-        private static MySqlTransaction BeginTransaction()
+        private static MySqlConnection OpenConnection(string connectionString)
+        {
+            MySqlConnection MySqlConnection = new MySqlConnection(connectionString);
+
+            MySqlConnection.Open();
+
+            return MySqlConnection;
+        }
+
+        private MySqlTransaction BeginTransaction()
         {
             return OpenConnection().BeginTransaction();
+        }
+
+        private static MySqlTransaction BeginTransaction(string connectionString)
+        {
+            return OpenConnection(connectionString).BeginTransaction();
         }
 
         private static MySqlCommand Command(string sql, MySqlConnection mysqlConnection)
@@ -39,7 +61,7 @@ namespace DBMySql
             return new MySqlDataAdapter(sql, mysqlConnection);
         }
 
-        public static int ExecNonQuery(string sql)
+        public int ExecNonQuery(string sql)
         {
             int Results = -1;
             MySqlConnection MySqlConnection = null;
@@ -62,7 +84,30 @@ namespace DBMySql
             return Results;
         }
 
-        public static bool ExecNonQueryTransaction(List<string> sqlStatements)
+        public static int ExecNonQuery(string sql, string connectionString)
+        {
+            int Results = -1;
+            MySqlConnection MySqlConnection = null;
+
+            try
+            {
+                MySqlConnection = OpenConnection(connectionString);
+
+                Results = Command(sql, MySqlConnection).ExecuteNonQuery();
+            }
+            catch (Exception exception)
+            {
+            }
+            finally
+            {
+                if (MySqlConnection != null)
+                    MySqlConnection.Close();
+            }
+
+            return Results;
+        }
+
+        public bool ExecNonQueryTransaction(List<string> sqlStatements)
         {
             MySqlTransaction MySqlTransaction = null;
             StringBuilder l_Results = new StringBuilder();
@@ -91,13 +136,52 @@ namespace DBMySql
                 if (MySqlTransaction != null)
                 {
                     MySqlTransaction.Commit();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
                 }
             }
 
             return true;
         }
 
-        public static long ExecInsertNonQueryReturnID(string sql)
+        public static bool ExecNonQueryTransaction(List<string> sqlStatements, string connectionString)
+        {
+            MySqlTransaction MySqlTransaction = null;
+            StringBuilder l_Results = new StringBuilder();
+
+            try
+            {
+                MySqlTransaction = BeginTransaction(connectionString);
+
+                foreach (string sqlStatement in sqlStatements)
+                {
+                    Command(sqlStatement, MySqlTransaction).ExecuteNonQuery();
+                }
+            }
+            catch (Exception exception)
+            {
+                if (MySqlTransaction != null)
+                {
+                    MySqlTransaction.Rollback();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
+                    return false;
+                }
+            }
+            finally
+            {
+                if (MySqlTransaction != null)
+                {
+                    MySqlTransaction.Commit();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
+                }
+            }
+
+            return true;
+        }
+
+        public long ExecInsertNonQueryReturnID(string sql)
         {
             long RowID = MySQLDBCommon.EmptyLong;
             MySqlTransaction MySqlTransaction = null;
@@ -126,13 +210,52 @@ namespace DBMySql
                 if (MySqlTransaction != null)
                 {
                     MySqlTransaction.Commit();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
                 }
             }
 
             return RowID;
         }
 
-        public static object ExecScalar(string sql)
+        public static long ExecInsertNonQueryReturnID(string sql, string connectionString)
+        {
+            long RowID = MySQLDBCommon.EmptyLong;
+            MySqlTransaction MySqlTransaction = null;
+            StringBuilder l_Results = new StringBuilder();
+
+            try
+            {
+                MySqlTransaction = BeginTransaction(connectionString);
+
+                MySqlCommand MySqlCommand = Command(sql, MySqlTransaction);
+                MySqlCommand.ExecuteNonQuery();
+
+                RowID = MySqlCommand.LastInsertedId;
+            }
+            catch (Exception exception)
+            {
+                if (MySqlTransaction != null)
+                {
+                    MySqlTransaction.Rollback();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
+                }
+            }
+            finally
+            {
+                if (MySqlTransaction != null)
+                {
+                    MySqlTransaction.Commit();
+                    MySqlTransaction.Dispose();
+                    MySqlTransaction = null;
+                }
+            }
+
+            return RowID;
+        }
+
+        public object ExecScalar(string sql)
         {
             {
                 MySqlConnection MySqlConnection = null;
@@ -157,7 +280,32 @@ namespace DBMySql
             }
         }
 
-        public static MySqlDataReader ExecDataReader(string sql)
+        public static object ExecScalar(string sql, string connectionString)
+        {
+            {
+                MySqlConnection MySqlConnection = null;
+                object ScalarReturnObject = null;
+
+                try
+                {
+                    MySqlConnection = OpenConnection(connectionString);
+
+                    ScalarReturnObject = Command(sql, MySqlConnection).ExecuteScalar();
+                }
+                catch (Exception exception)
+                {
+                }
+                finally
+                {
+                    if (MySqlConnection != null)
+                        MySqlConnection.Close();
+                }
+
+                return ScalarReturnObject;
+            }
+        }
+
+        public MySqlDataReader ExecDataReader(string sql)
         {
             MySqlConnection MySqlConnection = null;
             MySqlDataReader MySqlDataReader = null;
@@ -180,7 +328,30 @@ namespace DBMySql
             return MySqlDataReader;
         }
 
-        public static DataTable ExecDataTable(string sql)
+        public static MySqlDataReader ExecDataReader(string sql, string connectionString)
+        {
+            MySqlConnection MySqlConnection = null;
+            MySqlDataReader MySqlDataReader = null;
+
+            try
+            {
+                MySqlConnection = OpenConnection(connectionString);
+
+                MySqlDataReader = Command(sql, MySqlConnection).ExecuteReader();
+            }
+            catch (Exception exception)
+            {
+            }
+            finally
+            {
+                if (MySqlConnection != null)
+                    MySqlConnection.Close();
+            }
+
+            return MySqlDataReader;
+        }
+
+        public DataTable ExecDataTable(string sql)
         {
             {
                 MySqlConnection MySqlConnection = null;
@@ -190,6 +361,33 @@ namespace DBMySql
                 try
                 {
                     MySqlConnection = OpenConnection();
+
+                    MySqlDataAdapter = DataAdapter(sql, MySqlConnection);
+                    MySqlDataAdapter.Fill(DataTable);
+                }
+                catch (Exception exception)
+                {
+                }
+                finally
+                {
+                    if (MySqlConnection != null)
+                        MySqlConnection.Close();
+                }
+
+                return DataTable;
+            }
+        }
+
+        public static DataTable ExecDataTable(string sql, string connectionString)
+        {
+            {
+                MySqlConnection MySqlConnection = null;
+                MySqlDataAdapter MySqlDataAdapter = null;
+                DataTable DataTable = new DataTable();
+
+                try
+                {
+                    MySqlConnection = OpenConnection(connectionString);
 
                     MySqlDataAdapter = DataAdapter(sql, MySqlConnection);
                     MySqlDataAdapter.Fill(DataTable);
@@ -255,7 +453,7 @@ namespace DBMySql
             return ModelFieldValues;
         }
 
-        public static string GenerateInsertFields(IDatabaseModel model)
+        public static string GenerateInsertFields(DatabaseModel model)
         {
             StringBuilder StringBuilderFields = new StringBuilder();
             StringBuilder StringBuilderValues = new StringBuilder();
@@ -283,7 +481,7 @@ namespace DBMySql
             return StringBuilderFields.Append($") VALUES ({StringBuilderValues.ToString()})").ToString();
         }
 
-        public static string GenerateUpdateFields(IDatabaseModel model)
+        public static string GenerateUpdateFields(DatabaseModel model)
         {
             StringBuilder StringBuilder = new StringBuilder();
 
@@ -308,17 +506,17 @@ namespace DBMySql
             return StringBuilder.ToString();
         }
 
-        public static string GenerateStandardInsertStatement(IDatabaseModel model)
+        public static string GenerateStandardInsertStatement(DatabaseModel model)
         {
             return $"INSERT INTO {model.TableName()} {GenerateInsertFields(model)}";
         }
 
-        public static string GenerateStandardUpdateStatement(IDatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
+        public static string GenerateStandardUpdateStatement(DatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
         {
             return $"UPDATE {model.TableName()} SET {GenerateUpdateFields(model)} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
         }
 
-        public static string GenerateStandardDeleteStatement(IDatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
+        public static string GenerateStandardDeleteStatement(DatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
         {
             return $"DELETE FROM {model.TableName()} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
         }

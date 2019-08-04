@@ -11,7 +11,7 @@ public class TableFieldNameAttribute : Attribute
 {
     public string FieldName { get; }
 
-    internal TableFieldNameAttribute(string fieldName)
+    public TableFieldNameAttribute(string fieldName)
     {
         FieldName = fieldName;
 
@@ -23,7 +23,7 @@ public class TableFieldExcludeFromUpdateAttribute : Attribute
 {
     public bool ExcludeFromUpdate { get; }
 
-    internal TableFieldExcludeFromUpdateAttribute(bool excludeFromUpdate)
+    public TableFieldExcludeFromUpdateAttribute(bool excludeFromUpdate)
     {
         ExcludeFromUpdate = excludeFromUpdate;
     }
@@ -33,7 +33,7 @@ public class TableFieldExcludeFromInsertAttribute : Attribute
 {
     public bool ExcludeFromInsert { get; }
 
-    internal TableFieldExcludeFromInsertAttribute(bool excludeFromInsert)
+    public TableFieldExcludeFromInsertAttribute(bool excludeFromInsert)
     {
         ExcludeFromInsert = excludeFromInsert;
     }
@@ -43,7 +43,7 @@ public class TableNameAttribute : Attribute
 {
     public string TableName { get; }
 
-    internal TableNameAttribute(string tableName)
+    public TableNameAttribute(string tableName)
     {
         TableName = tableName;
 
@@ -59,7 +59,7 @@ public static class ClassExtension
     /// <summary>
     /// Returns an empty string if the [TableName] attribute isn't added to the property
     /// </summary>
-    public static string TableName(this IDatabaseModel value)
+    public static string TableName(this DatabaseModel value)
     {
         return value.GetType()
                         .GetCustomAttribute<TableNameAttribute>()
@@ -88,6 +88,28 @@ public static class IntegerExtension
     }
 
     public static bool IsEmpty(this int value) => (value == MySQLDBCommon.EmptyInt || value == 0) ? true : false;
+}
+#endregion
+
+#region Long Extensions
+
+public static class LongExtension
+{
+    public static bool ExcludeFromUpdate(this bool value)
+    {
+        return value.GetType()
+                        .GetCustomAttribute<TableFieldExcludeFromUpdateAttribute>()
+                        .ExcludeFromUpdate;
+    }
+
+    public static bool ExcludeFromInsert(this bool value)
+    {
+        return value.GetType()
+                        .GetCustomAttribute<TableFieldExcludeFromInsertAttribute>()
+                        .ExcludeFromInsert;
+    }
+
+    public static bool IsEmpty(this long value) => (value == MySQLDBCommon.EmptyLong || value == 0) ? true : false;
 }
 #endregion
 
