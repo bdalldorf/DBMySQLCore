@@ -47,6 +47,8 @@ namespace DBMySql
                 return SetValueForSql((string)value);
             if (value is bool)
                 return SetValueForSql((bool)value);
+            if (value is null)
+                return SetValueForSql(string.Empty);
 
             return string.Empty;
         }
