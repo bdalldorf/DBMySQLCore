@@ -513,12 +513,12 @@ namespace DBMySql
 
         public static string GenerateStandardUpdateStatement(DatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
         {
-            return $"UPDATE {model.TableName()} SET {GenerateUpdateFields(model)} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
+            return $"UPDATE {model.TableName()} SET {GenerateUpdateFields(model)} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {MySQLDBCommon.SetValueForSql(primaryKeyValue)}";
         }
 
         public static string GenerateStandardDeleteStatement(DatabaseModel model, string primaryKeyFieldName, object primaryKeyValue)
         {
-            return $"DELETE FROM {model.TableName()} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {primaryKeyValue}";
+            return $"DELETE FROM {model.TableName()} WHERE {GetDatabaseTableFieldName(model, primaryKeyFieldName)} = {MySQLDBCommon.SetValueForSql(primaryKeyValue)}";
         }
     }
 }

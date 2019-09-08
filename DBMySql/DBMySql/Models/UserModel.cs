@@ -37,7 +37,7 @@ namespace DBMySql.Models
 
         public UserModel(int id) : base(MySqlConnectionString.ConnectionString)
         {
-            DataTable DataTable = _MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE {MySQLDBStateless.GetDatabaseTableFieldName(this, nameof(this.ID))} = {id}");
+            DataTable DataTable = _MySQLDBStateless.ExecDataTable($"SELECT * FROM {this.TableName()} WHERE {MySQLDBStateless.GetDatabaseTableFieldName(this, nameof(this.ID))} = {MySQLDBCommon.SetValueForSql(id)}");
 
             if (DataTable.Rows.Count == 1)
             {
