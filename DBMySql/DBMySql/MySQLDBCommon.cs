@@ -123,8 +123,16 @@ namespace DBMySql
                 return EmptyDateTime;
         }
 
-        public static char GetValueCharFromSql(object value) => Convert.ToChar(value);
-        public static string GetValueStringFromSql(object value) => value.ToString();
+        public static char GetValueCharFromSql(object value)
+        {
+            if (value is char)
+                return (char)value;
+            else if (char.TryParse(value.ToString(), out char result))
+                return result;
+            else
+                return EmptyChar;
+        }
+
         public static bool GetValueBoolFromSql(object value)
         {
             if (value is bool)
@@ -134,5 +142,7 @@ namespace DBMySql
             else
                 return false;
         }
+
+        public static string GetValueStringFromSql(object value) => value.ToString();
     }
 }
