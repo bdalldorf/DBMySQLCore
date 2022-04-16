@@ -53,15 +53,86 @@ namespace DBMySql
             return string.Empty;
         }
 
-        public static byte GetValueByteFromSql(object value) => Convert.ToByte(value);
-        public static int GetValueIntFromSql(object value) => Convert.ToInt32(value);
-        public static long GetValueLongFromSql(object value) => Convert.ToInt64(value);
-        public static double GetValueDoubleFromSql(object value) => Convert.ToDouble(value);
-        public static float GetValueFloatFromSql(object value) => (float)Convert.ToDouble(value);
-        public static decimal GetValueDecimalFromSql(object value) => Convert.ToDecimal(value);
-        public static DateTime GetValueDateTimeFromSql(object value) => Convert.ToDateTime(value);
+        public static byte GetValueByteFromSql(object value)
+        {
+            if (value is byte)
+                return (byte)value;
+            else if (byte.TryParse(value.ToString(), out byte result))
+                return result;
+            else
+                return EmptyByte;
+        }
+
+        public static int GetValueIntFromSql(object value)
+        {
+            if (value is int)
+                return (int)value;
+            else if (int.TryParse(value.ToString(), out int result))
+                return result;
+            else
+                return EmptyInt;
+        }
+
+        public static long GetValueLongFromSql(object value)
+        {
+            if (value is long)
+                return (long)value;
+            else if (long.TryParse(value.ToString(), out long result))
+                return result;
+            else
+                return EmptyLong;
+        }
+
+        public static double GetValueDoubleFromSql(object value)
+        {
+            if (value is double)
+                return (double)value;
+            else if (double.TryParse(value.ToString(), out double result))
+                return result;
+            else
+                return EmptyDouble;
+        }
+
+        public static float GetValueFloatFromSql(object value)
+        {
+            if (value is float)
+                return (float)value;
+            else if (float.TryParse(value.ToString(), out float result))
+                return result;
+            else
+                return EmptyFloat;
+        }
+
+        public static decimal GetValueDecimalFromSql(object value)
+        {
+            if (value is decimal)
+                return (decimal)value;
+            else if (decimal.TryParse(value.ToString(), out decimal result))
+                return result;
+            else
+                return EmptyDecimal;
+        }
+
+        public static DateTime GetValueDateTimeFromSql(object value)
+        {
+            if (value is DateTime)
+                return (DateTime)value;
+            else if (DateTime.TryParse(value.ToString(), out DateTime result))
+                return result;
+            else
+                return EmptyDateTime;
+        }
+
         public static char GetValueCharFromSql(object value) => Convert.ToChar(value);
         public static string GetValueStringFromSql(object value) => value.ToString();
-        public static bool GetValueBoolFromSql(object value) => Convert.ToBoolean(value);
+        public static bool GetValueBoolFromSql(object value)
+        {
+            if (value is bool)
+                return (bool)value;
+            else if (bool.TryParse(value.ToString(), out bool result))
+                return result;
+            else
+                return false;
+        }
     }
 }
